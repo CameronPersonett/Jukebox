@@ -1,13 +1,60 @@
+speaker = peripheral.wrap('top')
+rednet.open('back')
+
+function resetQueue()
+    songs = {}
+    lastSong = 1
+    lastSample = 1
+end
+
+lastCommand = ''
+resetQueue()
+
 function run()
-    -- Stop resets global variables used for playback
-    stop('run')
-    
-    -- Wrap our speaker peripheral on top of this computer to play notes
-    speaker = peripheral.wrap('top')
- 
-    -- Open the modem on our left side for networking with the front-end
-    rednet.open('left')
-    
+    while true do
+        if lastCommand == '' then
+            awaitInput()
+
+        elseif lastCommand == 'play' then
+            if #songs > 0 then
+                print('Playing song ' .. lastSong .. ' beginning at sample ' .. lastSample .. ".")
+                parallel.waitForAny(awaitInput, play)
+                
+            else
+                print('Cannot play music; there are no songs in the queue!')
+                lastCommand = ''
+            end
+
+        elseif lastCommand == 'skip' then
+            -- Increment the song index and reset the sample index
+            -- to get to the next song in the queue, then play again
+            if #songs > 1 then
+                print('Skipping song ' .. lastSong .. '.')
+
+                lastSong = lastSong + 1
+                lastSample = 1
+                lastCommand = 'play'
+
+            else
+                print('Skipped final song in queue.')
+                lastCommand = 'stop'
+            end
+
+        elseif lastCommand == 'pause' then
+            print('Pausing song ' .. lastSong .. ' at sample ' .. lastSample)
+
+            -- Simply idle until we're told to do something else
+            lastCommand = ''
+            
+        elseif lastCommand == 'stop' then
+            print('Stopping playback and clearing queue.')
+            resetQueue()
+            lastCommand = ''
+        end
+    end
+end
+
+function awaitInput()
     -- Run a while loop to listen for incoming packets from the jukebox computer
     while true do
         -- Receive a packet over the jukebox player protocol
@@ -15,101 +62,64 @@ function run()
  
         -- Grab the command from the packet
         local command = packet.command
- 
-        -- There are two commands associated with incoming packets: queue and play
+
+        -- Set the last command to know how to proceed if we return
+        lastCommand = command
+
+        -- The queue command can be dealt with during playback; just append
+        -- the song and its samples to the songs table
         if command == 'queue' then
-            -- Queue tells us that we need to add the song object from the packet to our songs table
-            queue(packet.song)
-            
-        elseif command == 'play' and #songs > 0 then
-            -- Play tells us that the desired songs are queued and that we should begin playback
-            play()
+            local song = packet.song
+
+            -- Inject the song in the songs table
+            table.insert(songs, song)
+
+            print('Added ' .. song.name .. ' (' .. #song.samples .. ' samples) to the queue.')
+
+        else
+            -- If we received any other command, return to handle it in run()
+            return
         end
     end
 end
  
-function queue(song)
-    -- Put the song in the songs table
-    table.insert(songs, song)
-            
-    -- Print some information about the song
-    print('Added ' .. song.name .. ' (' .. #song.samples .. ' samples) to the queue.')
-end
- 
 function play()
-    -- Print the state of doPause and doStop before playback begins (for testing)
-    print('Beginning playback. doPause = ' .. tostring(doPause) .. ', doStop = ' .. tostring(doStop))
-    print('Starting at sample ' .. sampleIndex)
-    
     -- Get some information about the queue
     local totalSamples = 0
+
     for i = 1, #songs, 1 do
         totalSamples = totalSamples + #songs[i].samples
     end
     
     -- Print some information about the songs table
-    print('Playing ' .. #songs .. ' songs (' .. totalSamples .. ' samples).')
+    --print('Playing ' .. #songs .. ' songs (' .. totalSamples .. ' samples).')
     
     -- We use a nested for loop here - one for the amount of songs we have, another for the number
     -- of samples in each song and the last for the number of note events in each sample
-    for i = songIndex, #songs, 1 do
-        for j = sampleIndex, #songs[i].samples, 1 do
-            for k = 1, #songs[i].samples[j].noteEvents, 1 do
+    for curSong = lastSong, #songs, 1 do
+        for curSample = lastSample, #songs[curSong].samples, 1 do
+            for curEvent = 1, #songs[curSong].samples[curSample].noteEvents, 1 do
                 -- Play a note for every note event in the sample
-                playNote(songs[i].samples[j].noteEvents[k])
+                playNote(songs[curSong].samples[curSample].noteEvents[curEvent])
             end
             
-            -- After playing every note this tick, we grab the bundled output from the back and
-            -- check for orange/red; these tell us whether we need to pause/stop playback
-            doPause = redstone.testBundledInput('back', colors.orange)
-            doStop = redstone.testBundledInput('back', colors.red)
-            
-            -- Pause/stop playback if needed
-            if doPause then
-                -- Simply returning from this function will keep our songs table, song index and 
-                -- sample index intact so that we're able to resume from where we left off
-                songIndex = i
-                sampleIndex = j
-                return
-            elseif doStop then
-                -- Calling stop() before returning will reset the aforementioned globals, clearing
-                -- the queue entirely so that other songs can be queued/played
-                stop('play.doStop')
-                return
-            else -- If we're not pausing/stopping, sleep until next tick to play more notes
-                local curMS = os.epoch()
-                local tickRem = curMS % 50
-                local tickMin = 50 - tickRem
-                local waitTime = tickMin / 1000
-                sleep(waitTime)
-            end
+            -- Wait until the next tick
+            local curMS = os.epoch()
+            local tickRem = curMS % 50
+            local tickMin = 50 - tickRem
+            local waitTime = tickMin / 1000
+            sleep(waitTime)
+
+            lastSample = curSample
         end
  
         -- Set the sampleIndex back to 1 after this song is complete so we start from the
         -- beginning of the next song
-        sampleIndex = 1
+        lastSong = cur
     end
  
     -- Reset globals after playback is complete
-    stop('play')
-end
- 
-function stop(func)
-    -- Print the function this was called from (for testing)
-    print('Stop called from ' .. func .. '.')
-    
-    -- The array of songs that we add to and later play
-    songs = {}
-    
-    -- The index of the current song
-    songIndex = 1
-    
-    -- The index of the current sample (tick) within a song
-    sampleIndex = 1
-    
-    -- The pause/stop booleans
-    doPause = false
-    doStop = false
+    lastCommand = 'stop'
 end
  
 function playNote(noteEvent)
