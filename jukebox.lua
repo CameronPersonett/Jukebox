@@ -1,66 +1,75 @@
 function run()
     -- Open the modem on our left side for networking with the back-end
-    rednet.open('left')
+    rednet.open('back')
  
     -- Run a while loop to get user input
     while true do
         -- Read a line from the user terminal
-        command = read()
+        line = read()
  
         -- Split the text by the space character into a table
-        keywords = split(command)
-        
-        if keywords[1] == 'quit' then
-            -- If the user typed 'quit,' exit our script by returning
-            return
- 
-        elseif keywords[1] == 'queue' then
-            -- The user must enter a second keyword that contains the song/playlist name
-            if #keywords == 2 then
-                -- Call pause() in case the player computer is playing something so the 
-                -- it is able to receive packets again
-                pause()
- 
-                -- Run the song's script
-                shell.run(keywords[2])
- 
-                -- Start/resume playback
-                play()
-            else
-                -- Alert the user that their command structure is invalid
-                print('Invalid syntax - correct syntax is: queue <song/playlist>')
-            end
-            
-        elseif keywords[1] == 'play' then
-            -- The play command accepts two different command structures
-            if keywords[2] == nil then
-                -- The first is just simply "play" - this is to resume playback from a
-                -- paused state
-                play()
-            else
-                -- The second is "play <song/playlist>" - it queues the song and begins
-                -- playback in one fell swoop
+        keywords = split(line)
+
+        if #keywords > 0 then
+            command = keywords[1]
+
+            if command == 'quit' then
+                -- If the user typed 'quit,' exit our script by returning
+                return
+     
+            elseif command == 'queue' then
+                -- The user must enter a second keyword that contains the song/playlist name
+                if #keywords == 2 then
+                    -- Run the song's script to load the samples and broadcast them to the player computer
+                    shell.run(keywords[2])
+     
+                else
+                    -- Alert the user that their command structure is invalid
+                    print('Invalid syntax - correct syntax is: queue <song/playlist>')
+                end
                 
-                -- Stop playback if it is occurring and tell the player computer to
-                -- dump all of its current songs and reset its internal state
+            elseif command == 'play' then
+                local arg = keywords[2]
+
+                -- The play command accepts two different command structures
+                if arg == nil then
+                    -- The first is just simply "play" - this is to resume playback from a
+                    -- paused state
+                    play()
+
+                else
+                    -- The second is "play <song/playlist>" - it queues the song and begins
+                    -- playback in one fell swoop
+                    
+                    -- Stop playback if it is occurring and tell the player computer to
+                    -- dump all of its current songs and reset its internal state
+                    stop()
+     
+                    sleep(2)
+                    
+                    -- Queue the requested song/playlist
+                    shell.run(arg)
+                    
+                    -- Begin playback
+                    play();
+                end
+     
+            elseif command == 'pause' then
+                -- Pause playback
+                packet = {}
+                packet.command = 'pause'
+                rednet.broadcast(packet, 'JBPP')
+     
+            elseif command == 'skip' then
+                -- Skip the current song and begin playing the next
+                packet = {}
+                packet.command = 'skip' 
+                rednet.broadcast(packet, 'JBPP')
+                
+            elseif command == 'stop' then
+                -- Stop playback
                 stop()
- 
-                sleep(2)
-                
-                -- Queue the requested song/playlist
-                shell.run(keywords[2])
-                
-                -- Begin playback
-                play();
             end
- 
-        elseif keywords[1] == 'pause' then
-            -- Pause playback
-            pause()
-            
-        elseif keywords[1] == 'stop' then
-            -- Stop playback
-            stop()
         end
     end
 end
@@ -75,28 +84,10 @@ function play()
     rednet.broadcast(packet, 'JBPP')
 end
  
-function pause() 
-    -- Send a redstone signal on the orange channel to the player computer
-    -- to tell it to pause playback
-    rs.setBundledOutput('back', colors.orange)
-    
-    -- Sleep for one second to make sure it receives the signal
-    sleep(1)
-    
-    -- Turn off the signal
-    rs.setBundledOutput('back', 0)
-end
- 
 function stop()
-    -- Send a redstone signal on the red channel to the player computer
-    -- to tell it to stop playback
-    rs.setBundledOutput('back', colors.red)
-    
-    -- Sleep for one second to make sure it receives the signal
-    sleep(1)
-    
-    -- Turn off the signal
-    rs.setBundledOutput('back', 0)
+    packet = {}
+	packet.command = 'stop'
+	rednet.broadcast(packet, 'JBPP')
 end
  
 function split(inputstr)
