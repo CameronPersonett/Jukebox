@@ -57,8 +57,8 @@ end
 function awaitInput()
     -- Run a while loop to listen for incoming packets from the jukebox computer
     while true do
-        -- Receive a packet over the jukebox player protocol
-        local sender, packet, protocol = rednet.receive('JBPP')
+        -- Receive a packet over the jukebox protocol
+        local sender, packet, protocol = rednet.receive('JBP')
  
         -- Grab the command from the packet
         local command = packet.command
