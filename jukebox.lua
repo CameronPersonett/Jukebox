@@ -4,14 +4,14 @@ end
 
 rednet.open('back')
 
-if #args > 0 then
-    local command = args[1]
+if #arg > 0 then
+    local command = arg[1]
 
     if command == 'queue' then
-        if #args == 2 then
+        if #arg == 2 then
             -- The song script will send the sample data to
             -- the player computer automagically
-            shell.run(args[2])
+            shell.run(arg[2])
 
         else
             print('Error: No song/playlist arg passed.')
@@ -19,8 +19,8 @@ if #args > 0 then
     
     elseif command == 'play' then
         -- If the optional song/playlist arg is present, queue it up
-        if #args == 2 then
-            shell.run(args[2])
+        if #arg == 2 then
+            shell.run(arg[2])
         end
 
         sendPacket('play')
@@ -30,8 +30,8 @@ if #args > 0 then
         -- Default to 5 seconds
         local ticks = 100
 
-        if #args == 2 then
-            ticks = tonumber(args[2])
+        if #arg == 2 then
+            ticks = tonumber(arg[2])
         end
 
         local packet = {}
