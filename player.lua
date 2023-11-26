@@ -86,6 +86,7 @@ function play()
     -- of samples in each song and the last for the number of note events in each sample
     --for curSong = lastSong, #songs, do
     curSong = lastSong
+    totalSongs = #songs
 
     while curSong <= #songs do
         for curSample = lastSample, #songs[curSong].samples do
@@ -108,6 +109,7 @@ function play()
         -- beginning of the next song
         curSong = curSong + 1
         lastSong = curSong
+        totalSongs = #songs
     end
  
     -- Reset globals after playback is complete
