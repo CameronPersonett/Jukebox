@@ -58,13 +58,13 @@ function run()
                 -- Pause playback
                 packet = {}
                 packet.command = 'pause'
-                rednet.broadcast(packet, 'JBPP')
+                rednet.broadcast(packet, 'JBP')
      
             elseif command == 'skip' then
                 -- Skip the current song and begin playing the next
                 packet = {}
                 packet.command = 'skip' 
-                rednet.broadcast(packet, 'JBPP')
+                rednet.broadcast(packet, 'JBP')
                 
             elseif command == 'stop' then
                 -- Stop playback
@@ -81,13 +81,13 @@ function play()
     -- Send a packet containing the "play" command to the player computer
     packet = {}
     packet.command = 'play'
-    rednet.broadcast(packet, 'JBPP')
+    rednet.broadcast(packet, 'JBP')
 end
  
 function stop()
     packet = {}
 	packet.command = 'stop'
-	rednet.broadcast(packet, 'JBPP')
+	rednet.broadcast(packet, 'JBP')
 end
  
 function split(inputstr)
