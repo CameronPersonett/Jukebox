@@ -84,9 +84,12 @@ function play()
     
     -- We use a nested for loop here - one for the amount of songs we have, another for the number
     -- of samples in each song and the last for the number of note events in each sample
-    for curSong = lastSong, #songs, 1 do
-        for curSample = lastSample, #songs[curSong].samples, 1 do
-            for curEvent = 1, #songs[curSong].samples[curSample].noteEvents, 1 do
+    --for curSong = lastSong, #songs, do
+    curSong = lastSong
+
+    while curSong <= #songs do
+        for curSample = lastSample, #songs[curSong].samples, do
+            for curEvent = 1, #songs[curSong].samples[curSample].noteEvents, do
                 -- Play a note for every note event in the sample
                 playNote(songs[curSong].samples[curSample].noteEvents[curEvent])
             end
@@ -103,7 +106,8 @@ function play()
  
         -- Set the sampleIndex back to 1 after this song is complete so we start from the
         -- beginning of the next song
-        lastSong = cur
+        curSong = curSong + 1
+        lastSong = curSong
     end
  
     -- Reset globals after playback is complete
