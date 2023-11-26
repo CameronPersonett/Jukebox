@@ -86,9 +86,9 @@ function play()
     -- of samples in each song and the last for the number of note events in each sample
     --for curSong = lastSong, #songs, do
     curSong = lastSong
-    totalSongs = #songs
+    local totalSongs = #songs
 
-    while curSong <= #songs do
+    while curSong <= totalSongs do
         for curSample = lastSample, #songs[curSong].samples do
             for curEvent = 1, #songs[curSong].samples[curSample].noteEvents do
                 -- Play a note for every note event in the sample
