@@ -88,8 +88,8 @@ function play()
     curSong = lastSong
 
     while curSong <= #songs do
-        for curSample = lastSample, #songs[curSong].samples, do
-            for curEvent = 1, #songs[curSong].samples[curSample].noteEvents, do
+        for curSample = lastSample, #songs[curSong].samples do
+            for curEvent = 1, #songs[curSong].samples[curSample].noteEvents do
                 -- Play a note for every note event in the sample
                 playNote(songs[curSong].samples[curSample].noteEvents[curEvent])
             end
