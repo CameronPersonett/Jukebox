@@ -1,15 +1,3 @@
-speaker = peripheral.wrap('top')
-rednet.open('back')
-
-function resetQueue()
-    songs = {}
-    lastSong = 1
-    lastSample = 1
-end
-
-lastCommand = ''
-resetQueue()
-
 function run()
     while true do
         if lastCommand == '' then
@@ -328,5 +316,17 @@ function getNoteValue(instrument, note)
         end
     end
 end
+
+function resetQueue()
+    songs = {}
+    lastSong = 1
+    lastSample = 1
+end
+
+speaker = peripheral.wrap('top')
+rednet.open('back')
+
+lastCommand = ''
+resetQueue()
  
 run()
