@@ -1,4 +1,4 @@
-local jukebox_ui = require('jukebox_ui')
+jukebox_ui = require('jukebox_ui')
 
 local sendPacket = function(cmd)
     rednet.broadcast({ command = cmd }, 'JBP')
