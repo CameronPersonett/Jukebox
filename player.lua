@@ -3,7 +3,6 @@ monitor.setTextScale(0.5)
 
 function displayQueue()
     monitor.clear()
-    monitor.setCursorPos(1, 1)
     monitor.write("Queue:")
     for i, song in ipairs(songs) do
         -- Only display songs past lastSong
@@ -11,8 +10,37 @@ function displayQueue()
             goto continue
         end
         monitor.setCursorPos(1, i + 1)
+        
+        -- Generate a unique color based on the song name
+        local color = generateColor(song.name)
+        
+        -- Set the monitor text color to the generated color
+        monitor.setTextColor(color)
+        
         monitor.write(song.name)
     end
+end
+
+function generateColor(name)
+    -- Hash the song name to generate a unique color
+    local hash = 0
+    for i = 1, #name do
+        local char = string.byte(name, i)
+        hash = (hash * 31 + char) % 256
+    end
+    
+    -- Convert the hash to RGB values
+    local r = hash % 16
+    local g = (hash // 16) % 16
+    local b = (hash // 256) % 16
+    
+    -- Convert RGB values to monitor color code
+    local color = colors.combine(colors.red, colors.green, colors.blue)
+    color = colors.subtract(color, colors.red * (15 - r))
+    color = colors.subtract(color, colors.green * (15 - g))
+    color = colors.subtract(color, colors.blue * (15 - b))
+    
+    return color
 end
 
 function run()
