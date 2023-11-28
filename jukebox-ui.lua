@@ -2,7 +2,7 @@ local M = {}
 jukebox_commands = require('jukebox-commands')
 
 -- Local functions
-local function get_all_songs(dir)
+function get_all_songs(dir)
     local songs = {}
     local items = fs.list(dir)
     for i, item in ipairs(items) do
@@ -19,7 +19,7 @@ local function get_all_songs(dir)
     return songs
 end
 
-local function shuffle_songs(songs)
+function shuffle_songs(songs)
     for i = #songs, 2, -1 do
         local j = math.random(i)
         songs[i], songs[j] = songs[j], songs[i]

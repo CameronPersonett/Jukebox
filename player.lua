@@ -3,7 +3,7 @@ monitor.setTextScale(0.5)
 
 function displayQueue()
     monitor.clear()
-    local line = 1
+    local line = 0
     for i, song in ipairs(songs) do
         -- Only display songs past lastSong
         if i >= lastSong then
