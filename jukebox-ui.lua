@@ -1,4 +1,5 @@
 local M = {}
+local jukebox_commands = require('jukebox-commands')
 
 function M.run(dir, isRoot)
     -- Open the monitors
@@ -120,12 +121,12 @@ function M.run(dir, isRoot)
                             if event == "monitor_touch" then
                                 if y == 2 then
                                     -- Play action
-                                    shell.run(path)
+                                    jukebox_commands.play(path)
                                     -- Return to the directory listing
                                     M.run(dir, isRoot)
                                 elseif y == 3 then
                                     -- Queue action
-                                    shell.run('queue', path)
+                                    jukebox_commands.queue(path)
                                     -- Return to the directory listing
                                     M.run(dir, isRoot)
                                 elseif y == 4 then
@@ -140,19 +141,19 @@ function M.run(dir, isRoot)
         elseif event == "monitor_touch" and side == "left" then
             if y == 1 then
                 -- Play action
-                shell.run('play')
+                jukebox_commands.play()
             elseif y == 2 then
                 -- Pause action
-                shell.run('pause')
+                jukebox_commands.pause()
             elseif y == 3 then
                 -- Stop action
-                shell.run('stop')
+                jukebox_commands.stop()
             elseif y == 4 then
                 -- Next action
-                shell.run('skip')
+                jukebox_commands.skip()
             elseif y == 5 then
                 -- Previous action
-                shell.run('previous')
+                jukebox_commands.previous()
             end
         end
     end

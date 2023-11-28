@@ -1,8 +1,5 @@
-jukebox_ui = require('jukebox_ui')
-
-local sendPacket = function(cmd)
-    rednet.broadcast({ command = cmd }, 'JBP')
-end
+jukebox_ui = require('jukebox-ui')
+jukebox_commands = require('jukebox-commands')
 
 rednet.open('back')
 
@@ -17,10 +14,7 @@ if #arg > 0 then
         end
     elseif command == 'queue' then
         if #arg == 2 then
-            -- The song script will send the sample data to
-            -- the player computer automagically
-            shell.run(arg[2])
-
+            jukebox_commands.queue(arg[2])
         else
             print('Error: No song/playlist arg passed.')
         end
@@ -28,30 +22,39 @@ if #arg > 0 then
     elseif command == 'play' then
         -- If the optional song/playlist arg is present, queue it up
         if #arg == 2 then
-            shell.run(arg[2])
+            jukebox_commands.play(arg[2])
+        else
+            error('Error: No song/playlist arg passed.')
         end
 
-        sendPacket('play')
 
     -- Fast-foward/rewind
     elseif command == 'ff' or command == 'rw' then
-        -- Default to 5 seconds
-        local ticks = 100
-
         if #arg == 2 then
             ticks = tonumber(arg[2])
         end
 
-        local packet = {}
-        packet.command = command
-        packet.ticks = ticks
-        rednet.broadcast(packet, 'JBP')
+        jukebox_commands[command](ticks)
 
     elseif command == 'skip' or command == 'pause' or command == 'stop' then
-        -- Pause, skip and stop need no extra logic; just
-        -- chuck the packet at the player computer
-        sendPacket(command)
+        jukebox_commands[command]()
 
+    elseif command == 'version' then
+        print('Jukebox v1.0.0')
+    
+    elseif command == 'help' then
+        print('Usage: jukebox <command> [arg]')
+        print('Commands:')
+        print('  ui [path] - Run the jukebox UI')
+        print('  queue <path> - Queue a song or playlist')
+        print('  play <path> - Queue a song or playlist and play it')
+        print('  ff [ticks] - Fast-forward the current song')
+        print('  rw [ticks] - Rewind the current song')
+        print('  skip - Skip the current song')
+        print('  pause - Pause the current song')
+        print('  stop - Stop the current song')
+        print('  help - Display this help message')
+        print('  version - Display the version number')
     else
         print('Command \"' .. command .. '\" not recognized.')
     end
