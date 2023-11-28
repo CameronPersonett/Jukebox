@@ -1,5 +1,5 @@
 local M = {}
-local jukebox_commands = require('jukebox-commands')
+jukebox_commands = require('jukebox-commands')
 
 function M.run(dir, isRoot)
     -- Open the monitors
