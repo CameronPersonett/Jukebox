@@ -8,7 +8,7 @@ local function get_all_songs(dir)
     for i, item in ipairs(items) do
         local path = fs.combine(dir, item)
         if fs.isDir(path) then
-            local sub_songs = M.get_all_songs(path)
+            local sub_songs = get_all_songs(path)
             for j, song in ipairs(sub_songs) do
                 table.insert(songs, song)
             end
