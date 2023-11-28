@@ -1,6 +1,36 @@
 local M = {}
 jukebox_commands = require('jukebox-commands')
 
+-- Local functions
+local function get_all_songs(dir)
+    local songs = {}
+    local items = fs.list(dir)
+    for i, item in ipairs(items) do
+        local path = fs.combine(dir, item)
+        if fs.isDir(path) then
+            local sub_songs = M.get_all_songs(path)
+            for j, song in ipairs(sub_songs) do
+                table.insert(songs, song)
+            end
+        else
+            table.insert(songs, path .. ".lua")
+        end
+    end
+    return songs
+end
+
+local function shuffle_songs(songs)
+    for i = #songs, 2, -1 do
+        local j = math.random(i)
+        songs[i], songs[j] = songs[j], songs[i]
+    end
+end
+
+local function play_random_song(songs)
+    M.shuffle_songs(songs)
+    jukebox_commands.play(songs[1])
+end
+
 function M.run(dir, isRoot)
     -- Open the monitors
     local monitor = peripheral.wrap("top")
@@ -79,6 +109,8 @@ function M.run(dir, isRoot)
         monitor2.write("⏭️ Next")
         monitor2.setCursorPos(1, 5)
         monitor2.write("⏮️ Previous")
+        monitor2.setCursorPos(1, 6)
+        monitor2.write("🔀 Shuffle")
 
         -- Wait for a mouse click event
         local event, side, x, y = os.pullEvent("monitor_touch")
@@ -154,6 +186,13 @@ function M.run(dir, isRoot)
             elseif y == 5 then
                 -- Previous action
                 jukebox_commands.previous()
+            elseif y == 6 then
+                -- Shuffle action
+                local songs = get_all_songs(dir)
+                shuffle_songs(songs)
+                for _, song in ipairs(songs) do
+                    jukebox_commands.queue(song)
+                end
             end
         end
     end
