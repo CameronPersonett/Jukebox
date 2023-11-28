@@ -1,3 +1,16 @@
+monitor = peripheral.wrap('right')
+monitor.setTextScale(0.5)
+
+function displayQueue()
+    monitor.clear()
+    monitor.setCursorPos(1, 1)
+    monitor.write("Song Queue:")
+    for i, song in ipairs(songs) do
+        monitor.setCursorPos(1, i + 1)
+        monitor.write(song)
+    end
+end
+
 function run()
     while true do
         if lastCommand == '' then
@@ -63,6 +76,7 @@ function awaitInput()
             table.insert(songs, song)
 
             print('Added ' .. song.name .. ' (' .. #song.samples .. ' samples) to the queue.')
+            displayQueue()
 
         else
             -- If we received any other command, return to handle it in run()
@@ -89,6 +103,7 @@ function play()
     local totalSongs = #songs
 
     while curSong <= totalSongs do
+        displayQueue()
         for curSample = lastSample, #songs[curSong].samples do
             for curEvent = 1, #songs[curSong].samples[curSample].noteEvents do
                 -- Play a note for every note event in the sample
@@ -327,6 +342,7 @@ function resetQueue()
     songs = {}
     lastSong = 1
     lastSample = 1
+    displayQueue()
 end
 
 speaker = peripheral.wrap('top')
