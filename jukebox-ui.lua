@@ -100,17 +100,17 @@ function M.run(dir, isRoot)
         monitor2.setCursorPos(1, 1)
 
         -- Display control options
-        monitor2.write("⏯️ Play")
+        monitor2.write("[>] Play")
         monitor2.setCursorPos(1, 2)
-        monitor2.write("⏸️ Pause")
+        monitor2.write("[||] Pause")
         monitor2.setCursorPos(1, 3)
-        monitor2.write("⏹️ Stop")
+        monitor2.write("[■] Stop")
         monitor2.setCursorPos(1, 4)
-        monitor2.write("⏭️ Next")
+        monitor2.write("[>>] Next")
         monitor2.setCursorPos(1, 5)
-        monitor2.write("⏮️ Previous")
+        monitor2.write("[<<] Previous")
         monitor2.setCursorPos(1, 6)
-        monitor2.write("🔀 Shuffle")
+        monitor2.write("[?] Shuffle")
 
         -- Wait for a mouse click event
         local event, side, x, y = os.pullEvent("monitor_touch")
