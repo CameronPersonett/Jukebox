@@ -4,10 +4,10 @@ monitor.setTextScale(0.5)
 function displayQueue()
     monitor.clear()
     monitor.setCursorPos(1, 1)
-    monitor.write("Song Queue:")
+    monitor.write("Queue:")
     for i, song in ipairs(songs) do
         monitor.setCursorPos(1, i + 1)
-        monitor.write(song)
+        monitor.write(song.name)
     end
 end
 
