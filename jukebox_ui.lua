@@ -95,12 +95,12 @@ function M.run(dir, isRoot)
                     if item == ".." then
                         -- If ".." was clicked, navigate to the parent directory
                         local parentDir = fs.getDir(dir)
-                        run(parentDir, parentDir == "")
+                        M.run(parentDir, parentDir == "")
                     else
                         local path = fs.combine(dir, item)
                         if fs.isDir(path) then
                             -- If a directory was clicked, navigate into it
-                            run(path, false)
+                            M.run(path, false)
                         else
                             -- If a file was clicked, display options for it
                             monitor.clear()
@@ -120,15 +120,15 @@ function M.run(dir, isRoot)
                                     -- Play action
                                     shell.run(path)
                                     -- Return to the directory listing
-                                    run(dir, isRoot)
+                                    M.run(dir, isRoot)
                                 elseif y == 3 then
                                     -- Queue action
                                     shell.run('queue', path)
                                     -- Return to the directory listing
-                                    run(dir, isRoot)
+                                    M.run(dir, isRoot)
                                 elseif y == 4 then
                                     -- Back action
-                                    run(dir, isRoot)
+                                    M.run(dir, isRoot)
                                 end
                             end
                         end
