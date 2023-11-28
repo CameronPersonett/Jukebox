@@ -1,6 +1,18 @@
 local M = {}
 
 function M.run(dir, isRoot)
+    -- Open the monitors
+    local monitor = peripheral.wrap("top")
+    local monitor2 = peripheral.wrap("left")
+
+    if monitor == nil then
+        error("No monitor found on top")
+    end
+
+    if monitor2 == nil then
+        error("No monitor found on left")
+    end
+    
     local scrollPos = 0
 
     while true do
