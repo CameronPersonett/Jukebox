@@ -12,7 +12,7 @@ function M.run(dir, isRoot)
     if monitor2 == nil then
         error("No monitor found on left")
     end
-    
+
     local scrollPos = 0
 
     while true do
@@ -120,15 +120,15 @@ function M.run(dir, isRoot)
                                     -- Play action
                                     shell.run(path)
                                     -- Return to the directory listing
-                                    navigateDirectory(dir, isRoot)
+                                    run(dir, isRoot)
                                 elseif y == 3 then
                                     -- Queue action
                                     shell.run('queue', path)
                                     -- Return to the directory listing
-                                    navigateDirectory(dir, isRoot)
+                                    run(dir, isRoot)
                                 elseif y == 4 then
                                     -- Back action
-                                    navigateDirectory(dir, isRoot)
+                                    run(dir, isRoot)
                                 end
                             end
                         end
