@@ -144,6 +144,7 @@ function play()
         curSong = curSong + 1
         lastSong = curSong
         totalSongs = #songs
+        lastSample = 1
     end
  
     -- Reset globals after playback is complete
