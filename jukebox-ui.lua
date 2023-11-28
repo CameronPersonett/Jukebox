@@ -192,6 +192,7 @@ function M.run(dir, isRoot)
                 shuffle_songs(songs)
                 for _, song in ipairs(songs) do
                     jukebox_commands.queue(song)
+                    jukebox_commands.play()
                 end
             end
         end
