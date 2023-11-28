@@ -6,6 +6,10 @@ function displayQueue()
     monitor.setCursorPos(1, 1)
     monitor.write("Queue:")
     for i, song in ipairs(songs) do
+        -- Only display songs past lastSong
+        if i < lastSong then
+            goto continue
+        end
         monitor.setCursorPos(1, i + 1)
         monitor.write(song.name)
     end
@@ -17,6 +21,7 @@ function run()
             awaitInput()
 
         elseif lastCommand == 'play' then
+            displayQueue()
             if #songs > 0 then
                 print('Playing song ' .. lastSong .. ' beginning at sample ' .. lastSample .. ".")
                 parallel.waitForAny(awaitInput, play)
