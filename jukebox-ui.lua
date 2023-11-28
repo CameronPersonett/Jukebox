@@ -10,10 +10,10 @@ function get_all_songs(dir)
         if fs.isDir(path) then
             local sub_songs = get_all_songs(path)
             for j, song in ipairs(sub_songs) do
-                table.insert(songs, song .. ".lua")
+                table.insert(songs, song)
             end
         else
-            table.insert(songs, path .. ".lua")
+            table.insert(songs, path)
         end
     end
     return songs
@@ -191,7 +191,7 @@ function M.run(dir, isRoot)
                 local songs = get_all_songs(dir)
                 shuffle_songs(songs)
                 for _, song in ipairs(songs) do
-                    jukebox_commands.queue(song)
+                    jukebox_commands.queue(song .. ".lua")
                 end
                 jukebox_commands.play()
             end
