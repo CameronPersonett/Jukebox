@@ -121,12 +121,12 @@ function M.run(dir, isRoot)
                             if event == "monitor_touch" then
                                 if y == 2 then
                                     -- Play action
-                                    jukebox_commands.play(path)
+                                    jukebox_commands.play(path .. ".lua")
                                     -- Return to the directory listing
                                     M.run(dir, isRoot)
                                 elseif y == 3 then
                                     -- Queue action
-                                    jukebox_commands.queue(path)
+                                    jukebox_commands.queue(path .. ".lua")
                                     -- Return to the directory listing
                                     M.run(dir, isRoot)
                                 elseif y == 4 then
