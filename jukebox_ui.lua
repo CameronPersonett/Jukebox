@@ -4,6 +4,8 @@ function M.run(dir, isRoot)
     -- Open the monitors
     local monitor = peripheral.wrap("top")
     local monitor2 = peripheral.wrap("left")
+    monitor.setTextScale(0.5)
+    monitor2.setTextScale(0.5)
 
     if monitor == nil then
         error("No monitor found on top")
