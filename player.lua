@@ -21,21 +21,10 @@ function generateColor(name)
     local hash = 0
     for i = 1, #name do
         local char = string.byte(name, i)
-        hash = (hash * 31 + char) % 256
+        hash = (hash * 31 + char) % 16
     end
     
-    -- Convert the hash to RGB values
-    local r = hash % 16
-    local g = math.floor((hash / 16) % 16)
-    local b = math.floor((hash / 256) % 16)
-    
-    -- Convert RGB values to monitor color code
-    local color = colors.combine(colors.red, colors.green, colors.blue)
-    color = colors.subtract(color, colors.red * (15 - r))
-    color = colors.subtract(color, colors.green * (15 - g))
-    color = colors.subtract(color, colors.blue * (15 - b))
-    
-    return color
+    return 2 ^ hash
 end
 
 function run()
