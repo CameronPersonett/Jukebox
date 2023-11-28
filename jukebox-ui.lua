@@ -10,7 +10,7 @@ local function get_all_songs(dir)
         if fs.isDir(path) then
             local sub_songs = get_all_songs(path)
             for j, song in ipairs(sub_songs) do
-                table.insert(songs, song)
+                table.insert(songs, song .. ".lua")
             end
         else
             table.insert(songs, path .. ".lua")
