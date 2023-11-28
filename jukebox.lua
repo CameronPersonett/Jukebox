@@ -1,3 +1,5 @@
+local jukebox_ui = require('jukebox_ui')
+
 local sendPacket = function(cmd)
     rednet.broadcast({ command = cmd }, 'JBP')
 end
@@ -7,7 +9,13 @@ rednet.open('back')
 if #arg > 0 then
     local command = arg[1]
 
-    if command == 'queue' then
+    if command == 'ui' then
+        if #arg == 2 then
+            jukebox_ui.run(arg[2], true)
+        else
+            jukebox_ui.run('/', true)
+        end
+    elseif command == 'queue' then
         if #arg == 2 then
             -- The song script will send the sample data to
             -- the player computer automagically
@@ -49,5 +57,5 @@ if #arg > 0 then
     end
 
 else
-    print('Error: No args passed.')
+    print('Usage: jukebox <command> [arg]')
 end
