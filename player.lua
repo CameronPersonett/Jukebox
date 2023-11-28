@@ -3,15 +3,17 @@ monitor.setTextScale(0.5)
 
 function displayQueue()
     monitor.clear()
+    local line = 1
     for i, song in ipairs(songs) do
         -- Only display songs past lastSong
         if i >= lastSong then
-            monitor.setCursorPos(1, i + 1)
+            monitor.setCursorPos(1, line + 1)
             -- Generate a unique color based on the song name
             local color = generateColor(song.name)
             -- Set the monitor text color to the generated color
             monitor.setTextColor(color)
             monitor.write(song.name)
+            line = line + 1
         end
     end
 end
