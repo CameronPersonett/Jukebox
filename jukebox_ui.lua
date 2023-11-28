@@ -1,4 +1,6 @@
-function run(dir, isRoot)
+local M = {}
+
+function M.run(dir, isRoot)
     local scrollPos = 0
 
     while true do
@@ -141,3 +143,5 @@ function run(dir, isRoot)
         end
     end
 end
+
+return M
