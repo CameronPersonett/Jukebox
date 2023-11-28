@@ -26,8 +26,8 @@ function generateColor(name)
     
     -- Convert the hash to RGB values
     local r = hash % 16
-    local g = (hash // 16) % 16
-    local b = (hash // 256) % 16
+    local g = math.floor((hash / 16) % 16)
+    local b = math.floor((hash / 256) % 16)
     
     -- Convert RGB values to monitor color code
     local color = colors.combine(colors.red, colors.green, colors.blue)
